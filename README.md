@@ -24,7 +24,7 @@ A Svelte component that displays a realistic, real-time 3D visualization of a li
 
 2. **Navigate to the Project Directory**  
    ```bash
-   cd svelte-tank-app
+   cd threeJS-tank-visualization
    ```
 
 3. **Install Dependencies**  
