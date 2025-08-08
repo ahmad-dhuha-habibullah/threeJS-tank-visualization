@@ -1,71 +1,109 @@
-3D Svelte Liquid Tank Visualization
-This project is a Svelte component that displays a realistic, real-time 3D visualization of a liquid tank. It is designed to be easily integrated into a larger application and connected to a live data source.
+# 3D Svelte Liquid Tank Visualization
 
-How to Test the Code
-Follow these steps to run the project on your local machine.
+A Svelte component that displays a realistic, real-time 3D visualization of a liquid tank, designed for easy integration into larger applications and connection to live data sources.
 
-Prerequisites
-You must have Node.js installed, which includes npm.
+## Table of Contents
+- [Prerequisites](#prerequisites)
+- [Setup and Installation](#setup-and-installation)
+- [Key Files](#key-files)
+- [Connecting to a Live Database](#connecting-to-a-live-database)
+- [License](#license)
 
-Setup and Installation
-Clone the Repository Open your terminal and run the following command to clone the project files from GitHub:
+## Prerequisites
 
-git clone https://github.com/ahmad-dhuha-habibullah/threeJS-tank-visualization.git
+- **Node.js**: Ensure Node.js (which includes npm) is installed on your machine. Download it from [nodejs.org](https://nodejs.org) if needed.
 
-Navigate to Project Directory
+## Setup and Installation
 
-cd svelte-tank-app
+1. **Clone the Repository**  
+   Open your terminal and run:
 
-Install Dependencies
-This will download all the necessary packages, including SvelteKit and three.js.
+   ```bash
+   git clone https://github.com/ahmad-dhuha-habibullah/threeJS-tank-visualization.git
+   ```
 
-npm install
+2. **Navigate to the Project Directory**  
+   ```bash
+   cd svelte-tank-app
+   ```
 
-Run the Development Server
+3. **Install Dependencies**  
+   Run the following command to install all required packages, including SvelteKit and Three.js:
 
-npm run dev
+   ```bash
+   npm install
+   ```
 
-View the App
-Open your web browser and navigate to http://localhost:5173. You should see the 3D tank visualization running.
+4. **Run the Development Server**  
+   Start the development server with:
 
-Key Files
-There are two main files you need to be aware of:
+   ```bash
+   npm run dev
+   ```
 
-src/lib/TankVisualization.svelte: This is the core 3D component. It is a self-contained module that only cares about one thing: rendering the tank based on the level property it receives. You should not need to edit this file.
+5. **View the App**  
+   Open your web browser and navigate to `http://localhost:5173`. You should see the 3D tank visualization.
 
-src/routes/+page.svelte: This is the main page that hosts and tests the visualization component. This is the file you will edit to connect to your real database. It shows how to pass the waterLevel variable to the component's level prop.
+## Key Files
 
-Connecting to a Live Database
-The component is ready to be connected to a live data source. All the connection logic should be handled in the parent component (src/routes/+page.svelte).
+- **`src/lib/TankVisualization.svelte`**:  
+  The core 3D component that renders the tank based on the `level` property. This is a self-contained module and typically does not require edits.
 
-Open src/routes/+page.svelte. You will see this section in the <script> tag:
+- **`src/routes/+page.svelte`**:  
+  The main page that hosts and tests the `TankVisualization` component. Edit this file to connect to your real database and pass the `waterLevel` variable to the component's `level` prop.
 
+## Connecting to a Live Database
+
+The `TankVisualization` component is designed to integrate with a live data source. All connection logic should be implemented in the parent component (`src/routes/+page.svelte`).
+
+In `src/routes/+page.svelte`, locate the `<script>` section:
+
+```svelte
 <script>
   import TankVisualization from '$lib/TankVisualization.svelte';
   import { onMount } from 'svelte';
 
-  let waterLevel = 0; // The variable that controls the tank's level.
+  let waterLevel = 0; // Controls the tank's level
 
-  // --- THIS IS WHERE YOU CONNECT TO THE DATABASE ---
+  // --- CONNECT TO YOUR DATABASE HERE ---
   onMount(() => {
-    // To connect to your Django API, you would use a `fetch` call here.
-    // For example:
+    // Example: Fetch data from a Django API
     /*
     async function getTankLevel() {
       const response = await fetch('https://your-api.com/tank/level');
       const data = await response.json();
-      waterLevel = data.level; // Update the variable with data from the API
+      waterLevel = data.level; // Update with API data
     }
     getTankLevel();
     */
 
-    // For now, it's set manually for demonstration:
+    // Temporary manual setting for demonstration
     waterLevel = 65;
   });
 </script>
+```
 
-To connect your real-time data:
+### Steps to Connect to a Live Data Source
 
-For initial data: Replace the manual waterLevel = 65; line with a fetch call to your Django API endpoint inside the onMount function.
+1. **For Initial Data**:  
+   Replace `waterLevel = 65;` with a `fetch` call to your Django API endpoint inside the `onMount` function.
 
-For live updates: If you are using WebSockets or another real-time technology, you will set up the listener inside onMount. When a new message arrives with a new level, simply update the waterLevel variable. Svelte's reactivity will automatically update the 3D visualization.
+2. **For Live Updates**:  
+   If using WebSockets or another real-time technology, set up a listener inside `onMount`. When new data arrives, update the `waterLevel` variable. Svelte's reactivity will automatically refresh the 3D visualization.
+
+Example with WebSocket:
+
+```svelte
+onMount(() => {
+  const socket = new WebSocket('wss://your-api.com/tank/updates');
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    waterLevel = data.level; // Update with WebSocket data
+  };
+  return () => socket.close(); // Cleanup on component unmount
+});
+```
+
+## License
+
+This project is licensed under the [MIT License](LICENSE). See the `LICENSE` file for details.
